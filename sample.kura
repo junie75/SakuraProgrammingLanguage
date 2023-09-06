@@ -1,0 +1,11 @@
+--Juni Ejere
+--Sample Sakura Program
+--Sample.kura
+
+(-:
+   Sakura version of the classic "Hello, world!" program.
+:-)
+
+main:
+
+	output << `hello world` << ^n
