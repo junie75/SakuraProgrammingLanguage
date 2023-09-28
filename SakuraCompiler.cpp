@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
-// Juni Ejere & Dr. Art Hanna
-// Sakura1 Scanner
-// Sakura1Scanner.cpp
+// Dr. Art Hanna
+// SPL1 Parser
+// SPL1Parser.cpp
 //-----------------------------------------------------------
 #include <iostream>
 #include <iomanip>
@@ -17,7 +17,8 @@
 using namespace std;
 
 //#define TRACEREADER
-#define TRACESCANNER
+//#define TRACESCANNER
+#define TRACEPARSER
 
 #include "Sakura.h"
 
@@ -40,7 +41,6 @@ typedef enum
 // operators
 // ***NONE***
 } TOKENTYPE;
-
 //-----------------------------------------------------------
 struct TOKENTABLERECORD
 //-----------------------------------------------------------
@@ -63,8 +63,6 @@ const TOKENTABLERECORD TOKENTABLE[] =
    { ENDL        ,"ENDL"        ,false }, //endl is not a reservedword so false, ^n symbol is?
    { OUTSHIFT    ,"OUTSHIFT"    ,false },
    { COLON       ,"COLON"       ,false }
-   //NEED TO ADD SOMETHING FOR END!!!! FOR THE PARSING FUNCTION
-   //JK can just use EOPTOKEN
 };
 
 //-----------------------------------------------------------
@@ -82,6 +80,36 @@ struct TOKEN
 //--------------------------------------------------
 READER<CALLBACKSUSED> reader(SOURCELINELENGTH,LOOKAHEAD);
 LISTER lister(LINESPERPAGE);
+
+#ifdef TRACEPARSER
+int level;
+#endif
+
+//-----------------------------------------------------------
+void EnterModule(const char module[])
+//-----------------------------------------------------------
+{
+#ifdef TRACEPARSER
+   char information[SOURCELINELENGTH+1];
+
+   level++;
+   sprintf(information,"   %*s>%s",level*2," ",module);
+   lister.ListInformationLine(information);
+#endif
+}
+
+//-----------------------------------------------------------
+void ExitModule(const char module[])
+//-----------------------------------------------------------
+{
+#ifdef TRACEPARSER
+   char information[SOURCELINELENGTH+1];
+
+   sprintf(information,"   %*s<%s",level*2," ",module);
+   lister.ListInformationLine(information);
+   level--;
+#endif
+}
 
 //--------------------------------------------------
 void ProcessCompilerError(int sourceLineNumber,int sourceLineIndex,const char errorMessage[])
@@ -103,6 +131,7 @@ int main()
    void Callback1(int sourceLineNumber,const char sourceLine[]);
    void Callback2(int sourceLineNumber,const char sourceLine[]);
    void GetNextToken(TOKEN tokens[]);
+   void ParseSPLProgram(TOKEN tokens[]);
 
    char sourceFileName[80+1];
    TOKEN tokens[LOOKAHEAD+1];
@@ -122,20 +151,167 @@ int main()
       for (int i = 0; i <= LOOKAHEAD; i++)
          GetNextToken(tokens);
 
-   // Scan entire source file (causes outputting of TRACESCANNER-enabled information to list file)
-      while ( tokens[0].type != EOPTOKEN )
-         GetNextToken(tokens);
+#ifdef TRACEPARSER
+      level = 0;
+#endif
+   
+      ParseSPLProgram(tokens);
    }
-   catch (SAKURAEXCEPTION sakuraException)
+  catch (SAKURAEXCEPTION sakuraException)
    {
       cout << "Sakura exception: " << sakuraException.GetDescription() << endl;
    }
-   lister.ListInformationLine("******* Sakura1 scanner ending");
-   cout << "Sakura1 scanner ending\n";
+   lister.ListInformationLine("******* Sakura1 Parser ending");
+   cout << "Sakura1 Parser ending\n";
 
    system("PAUSE");
    return( 0 );
    
+}
+
+//-----------------------------------------------------------
+void ParseSPLProgram(TOKEN tokens[])
+//-----------------------------------------------------------
+{
+   void GetNextToken(TOKEN tokens[]);
+   void ParsePROGRAMDefinition(TOKEN tokens[]);
+
+   EnterModule("SakuraProgram");
+
+  // if ( tokens[0].type == PROGRAM )
+  //********NEED TO ADD IN COLON FUNCTIONALITY
+   /*if ( tokens[0].type == MAIN ){
+   	if( tokens[1].type== COLON)
+      ParsePROGRAMDefinition(tokens);
+    }
+   else
+      ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
+                           "Expecting main function");*/
+                           
+    /* makes sure program begins with main reserved word + colon*/
+   if( tokens[0].type != MAIN)
+   {
+   	ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
+                           "Expecting main function");
+   }
+   else if( tokens[1].type != COLON)
+   {
+   	ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
+                           "Expecting colon after main"); 
+   }
+   else
+   	ParsePROGRAMDefinition(tokens);
+   
+
+   if ( tokens[0].type != EOPTOKEN )
+      ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
+                           "Expecting end-of-program");
+
+   ExitModule("SakuraProgram");
+}
+
+//-----------------------------------------------------------
+void ParsePROGRAMDefinition(TOKEN tokens[])
+//-----------------------------------------------------------
+{
+   void GetNextToken(TOKEN tokens[]);
+   void ParseStatement(TOKEN tokens[]);
+
+   EnterModule("PROGRAMDefinition");
+
+   GetNextToken(tokens);
+   GetNextToken(tokens);
+
+   //while ( tokens[0].type != END )
+   while ( tokens[0].type != EOPTOKEN )
+      ParseStatement(tokens);
+
+   GetNextToken(tokens);
+
+   ExitModule("PROGRAMDefinition");
+}
+
+//-----------------------------------------------------------
+void ParseStatement(TOKEN tokens[])
+//-----------------------------------------------------------
+{
+   void GetNextToken(TOKEN tokens[]);
+   void ParsePRINTStatement(TOKEN tokens[]);
+
+   EnterModule("Statement");
+   //GetNextToken(tokens);
+
+
+   switch ( tokens[0].type )
+   {
+      case OUTPUT:
+         ParsePRINTStatement(tokens);
+         break;
+      /*case EOPTOKEN:
+      	break;*/
+      default:
+         ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
+                              "Expecting beginning-of-statement");
+         break;
+   }
+
+   ExitModule("Statement");
+}
+
+//-----------------------------------------------------------
+void ParsePRINTStatement(TOKEN tokens[])
+//-----------------------------------------------------------
+{
+   void GetNextToken(TOKEN tokens[]);
+
+   EnterModule("PRINTStatement");
+   GetNextToken(tokens);
+
+   /*do
+   {
+      GetNextToken(tokens);
+
+      switch ( tokens[0].type )
+      {
+         case STRING:
+            GetNextToken(tokens);
+            break;
+         case ENDL:
+            GetNextToken(tokens);
+            break;
+         default:
+            ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
+                                 "Expecting string or ENDL");
+      }
+   } while ( tokens[0].type == OUTSHIFT );*/
+   
+   //outshift should be first token after OUTPUT reserved word, so evaluted FIRST
+   while ( tokens[0].type == OUTSHIFT && tokens[0].type != OUTPUT)
+   {
+   	      GetNextToken(tokens);
+
+      switch ( tokens[0].type )
+      {
+         case STRING:
+            GetNextToken(tokens);
+            break;
+         case ENDL:
+            GetNextToken(tokens);
+            break;
+         default:
+            ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
+                                 "Expecting string or ENDL");
+      }
+   }
+
+//does not need to end in period
+   /*if ( tokens[0].type != PERIOD )
+      ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
+                           "Expecting '.'");*/
+
+   //GetNextToken(tokens);
+
+   ExitModule("PRINTStatement");
 }
 
 //-----------------------------------------------------------
@@ -331,7 +507,7 @@ void GetNextToken(TOKEN tokens[])
             {
                static int count = 0;
    
-               if ( ++count > (LOOKAHEAD+1) )
+               if ( ++count > (LOOKAHEAD+3) ) //changed from 1, 2, to 3--WHY????
                   ProcessCompilerError(sourceLineNumber,sourceLineIndex,
                                        "Unexpected end-of-program");
                else
@@ -364,8 +540,8 @@ void GetNextToken(TOKEN tokens[])
 	            lexeme[0] = nextCharacter; lexeme[1] = reader.GetLookAheadCharacter(1).character; lexeme[2] = '\0';
 	            reader.GetNextCharacter();
 	            reader.GetNextCharacter();
-	            break;
             }
+            break;
 // outshift
          case '<': 
          	//reader.GetLookAheadCharacter(1).character == 'n'
@@ -378,8 +554,8 @@ void GetNextToken(TOKEN tokens[])
 	            lexeme[0] = nextCharacter; lexeme[1] = reader.GetLookAheadCharacter(1).character; lexeme[2] = '\0';
 	            reader.GetNextCharacter();
 	            reader.GetNextCharacter();
-	            break;
             }
+            break;
          default:  
             type = UNKTOKEN;
             lexeme[0] = nextCharacter; lexeme[1] = '\0';
