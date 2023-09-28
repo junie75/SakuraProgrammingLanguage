@@ -9,3 +9,4 @@
 main:
 
 	output << `hello world` << ^n
+--what's up
