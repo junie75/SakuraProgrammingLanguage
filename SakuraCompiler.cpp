@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
-// Dr. Art Hanna
-// SPL1 Parser
-// SPL1Parser.cpp
+// Juni Ejere
+// Sakura1 Compiler
+// Sakura1Compiler.cpp
 //-----------------------------------------------------------
 #include <iostream>
 #include <iomanip>
@@ -19,6 +19,7 @@ using namespace std;
 //#define TRACEREADER
 //#define TRACESCANNER
 #define TRACEPARSER
+#define TRACECOMPILER
 
 #include "Sakura.h"
 
@@ -80,6 +81,9 @@ struct TOKEN
 //--------------------------------------------------
 READER<CALLBACKSUSED> reader(SOURCELINELENGTH,LOOKAHEAD);
 LISTER lister(LINESPERPAGE);
+// CODEGENERATION
+CODE code;
+// ENDCODEGENERATION
 
 #ifdef TRACEPARSER
 int level;
@@ -142,6 +146,11 @@ int main()
    try
    {
       lister.OpenFile(sourceFileName);
+      code.OpenFile(sourceFileName);
+
+// CODEGENERATION
+      code.EmitBeginningCode(sourceFileName);
+// ENDCODEGENERATION
       reader.SetLister(&lister);
       reader.AddCallbackFunction(Callback1);
       reader.AddCallbackFunction(Callback2);
@@ -156,13 +165,17 @@ int main()
 #endif
    
       ParseSPLProgram(tokens);
+      
+// CODEGENERATION
+      code.EmitEndingCode();
+// ENDCODEGENERATION
    }
   catch (SAKURAEXCEPTION sakuraException)
    {
       cout << "Sakura exception: " << sakuraException.GetDescription() << endl;
    }
-   lister.ListInformationLine("******* Sakura1 Parser ending");
-   cout << "Sakura1 Parser ending\n";
+   lister.ListInformationLine("******* Sakura1 Compiler ending");
+   cout << "Sakura1 Compiler ending\n";
 
    system("PAUSE");
    return( 0 );
@@ -216,8 +229,38 @@ void ParsePROGRAMDefinition(TOKEN tokens[])
 {
    void GetNextToken(TOKEN tokens[]);
    void ParseStatement(TOKEN tokens[]);
-
+   
+   char line[SOURCELINELENGTH+1];
+   char label[SOURCELINELENGTH+1];
+   char reference[SOURCELINELENGTH+1];
+   
    EnterModule("PROGRAMDefinition");
+   
+// CODEGENERATION
+   code.EmitUnformattedLine("; **** =========");
+   sprintf(line,"; **** PROGRAM module (%4d)",tokens[0].sourceLineNumber);
+   code.EmitUnformattedLine(line);
+   code.EmitUnformattedLine("; **** =========");
+   code.EmitFormattedLine("PROGRAMMAIN","EQU"  ,"*");
+
+   code.EmitFormattedLine("","PUSH" ,"#RUNTIMESTACK","set SP");
+   code.EmitFormattedLine("","POPSP");
+   code.EmitFormattedLine("","PUSHA","STATICDATA","set SB");
+   code.EmitFormattedLine("","POPSB");
+   code.EmitFormattedLine("","PUSH","#HEAPBASE","initialize heap");
+   code.EmitFormattedLine("","PUSH","#HEAPSIZE");
+   code.EmitFormattedLine("","SVC","#SVC_INITIALIZE_HEAP");
+   sprintf(label,"PROGRAMBODY%04d",code.LabelSuffix());
+   code.EmitFormattedLine("","CALL",label);
+   code.AddDSToStaticData("Normal program termination","",reference);
+   code.EmitFormattedLine("","PUSHA",reference);
+   code.EmitFormattedLine("","SVC","#SVC_WRITE_STRING");
+   code.EmitFormattedLine("","SVC","#SVC_WRITE_ENDL");
+   code.EmitFormattedLine("","PUSH","#0D0","terminate with status = 0");
+   code.EmitFormattedLine("","SVC" ,"#SVC_TERMINATE");
+   code.EmitUnformattedLine("");
+   code.EmitFormattedLine(label,"EQU","*");
+// ENDCODEGENERATION
 
    GetNextToken(tokens);
    GetNextToken(tokens);
@@ -225,6 +268,14 @@ void ParsePROGRAMDefinition(TOKEN tokens[])
    //while ( tokens[0].type != END )
    while ( tokens[0].type != EOPTOKEN )
       ParseStatement(tokens);
+      
+// CODEGENERATION
+   code.EmitFormattedLine("","RETURN");
+   code.EmitUnformattedLine("; **** =========");
+   sprintf(line,"; **** END (%4d)",tokens[0].sourceLineNumber);
+   code.EmitUnformattedLine(line);
+   code.EmitUnformattedLine("; **** =========");
+// ENDCODEGENERATION
 
    GetNextToken(tokens);
 
@@ -263,8 +314,16 @@ void ParsePRINTStatement(TOKEN tokens[])
 //-----------------------------------------------------------
 {
    void GetNextToken(TOKEN tokens[]);
+   
+   char line[SOURCELINELENGTH+1];
 
    EnterModule("PRINTStatement");
+   
+// CODEGENERATION
+   sprintf(line,"; **** PRINT statement (%4d)",tokens[0].sourceLineNumber);
+   code.EmitUnformattedLine(line);
+// ENDCODEGENERATION
+
    GetNextToken(tokens);
 
    /*do
@@ -293,9 +352,23 @@ void ParsePRINTStatement(TOKEN tokens[])
       switch ( tokens[0].type )
       {
          case STRING:
+         	
+// CODEGENERATION
+            char reference[SOURCELINELENGTH+1];
+
+            code.AddDSToStaticData(tokens[0].lexeme,"",reference);
+            code.EmitFormattedLine("","PUSHA",reference);
+            code.EmitFormattedLine("","SVC","#SVC_WRITE_STRING");
+// ENDCODEGENERATION
+
             GetNextToken(tokens);
             break;
          case ENDL:
+         	
+// CODEGENERATION
+            code.EmitFormattedLine("","SVC","#SVC_WRITE_ENDL");
+// ENDCODEGENERATION
+
             GetNextToken(tokens);
             break;
          default:
@@ -326,6 +399,12 @@ void Callback2(int sourceLineNumber,const char sourceLine[])
 //-----------------------------------------------------------
 {
    cout << sourceLine << endl;
+    char line[SOURCELINELENGTH+1];
+
+// CODEGENERATION
+   sprintf(line,"; %4d %s",sourceLineNumber,sourceLine);
+   code.EmitUnformattedLine(line);
+// ENDCODEGENERATION
 }
 
 //-----------------------------------------------------------
@@ -475,7 +554,7 @@ void GetNextToken(TOKEN tokens[])
    {
       switch ( nextCharacter )
       {
-// <string>
+/* <string>
          case '`': 
             i = 0;
             nextCharacter = reader.GetNextCharacter().character;
@@ -492,7 +571,7 @@ void GetNextToken(TOKEN tokens[])
                {
                   lexeme[i++] = nextCharacter;
                   nextCharacter = reader.GetNextCharacter().character;
-               }*/ 
+               }'*'/ 
                lexeme[i++] = nextCharacter;
                nextCharacter = reader.GetNextCharacter().character;
             }
@@ -502,7 +581,31 @@ void GetNextToken(TOKEN tokens[])
             lexeme[i] = '\0';
             type = STRING;
             reader.GetNextCharacter();
+            break;*/
+//===================================================================
+//    ***EXAMPLE***
+//     non-SPL <string> (no escape sequences)
+//    <string>              ::= `{<ASCIICharacter>}*`                      || *Note* no embedded ` allowed
+//===================================================================
+         case '`': 
+            i = 0;
+            nextCharacter = reader.GetNextCharacter().character;
+            while ( (nextCharacter != '`') 
+                 && (nextCharacter != READER<CALLBACKSUSED>::EOLC)
+                 && (nextCharacter != READER<CALLBACKSUSED>::EOPC) )
+            {
+               lexeme[i++] = nextCharacter;
+               nextCharacter = reader.GetNextCharacter().character;
+            }
+            if ( (nextCharacter == READER<CALLBACKSUSED>::EOLC)
+              || (nextCharacter == READER<CALLBACKSUSED>::EOPC) )
+               ProcessCompilerError(sourceLineNumber,sourceLineIndex,
+                                    "Un-terminated string literal");
+            lexeme[i] = '\0';
+            type = STRING;
+            reader.GetNextCharacter();
             break;
+//===================================================================
          case READER<CALLBACKSUSED>::EOPC: 
             {
                static int count = 0;
