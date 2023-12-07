@@ -17,7 +17,7 @@
 using namespace std;
 
 //#define TRACEREADER
-//#define TRACESCANNER
+#define TRACESCANNER
 //#define TRACEPARSER
 #define TRACECOMPILER
 
@@ -52,6 +52,7 @@ typedef enum //definition of all Sakura pseudo-terminal and terminal symbols
    OPARENTHESIS, //"("
    CPARENTHESIS,  // ")"
 // operators
+   PIPE, // | ABS operator
    LT, // LESS THAN "<"
    LTEQ, //LESS THAN OR EQ "<="
    EQ, //EQUAL "="
@@ -79,6 +80,7 @@ const TOKENTABLERECORD TOKENTABLE[] = //instance of tokentable record with Sakur
 //-----------------------------------------------------------
 {
    { IDENTIFIER  ,"IDENTIFIER"  ,false },
+   { INTEGER     ,"INTEGER"     ,false },
    { STRING      ,"STRING"      ,false },
    { EOPTOKEN    ,"EOPTOKEN"    ,false },
    { UNKTOKEN    ,"UNKTOKEN"    ,false },
@@ -87,15 +89,15 @@ const TOKENTABLERECORD TOKENTABLE[] = //instance of tokentable record with Sakur
    { ENDL        ,"ENDL"        ,false }, //endl is not a reservedword so false, ^n symbol is?
    { OUTSHIFT    ,"OUTSHIFT"    ,false },
    { COLON       ,"COLON"       ,false },
-   { OR          ,"OR"          ,true  },
-   { NOR         ,"NOR"         ,true  },
-   { XOR         ,"XOR"         ,true  },
-   { AND         ,"AND"         ,true  },
-   { NAND        ,"NAND"        ,true  },
-   { NOT         ,"NOT"         ,true  },
-   { ABS         ,"ABS"         ,true  },
-   { TRUE        ,"TRUE"        ,true  },
-   { FALSE       ,"FALSE"       ,true  },
+   { OR          ,"or"          ,true  },
+   { NOR         ,"nor"         ,true  },
+   { XOR         ,"xor"         ,true  },
+   { AND         ,"and"         ,true  },
+   { NAND        ,"nand"        ,true  },
+   { NOT         ,"not"         ,true  },
+   { ABS         ,"ABS"         ,false },
+   { TRUE        ,"true"        ,true  },
+   { FALSE       ,"false"       ,true  },
    { OPARENTHESIS,"OPARENTHESIS",false },
    { CPARENTHESIS,"CPARENTHESIS",false },
    { LT          ,"LT"          ,false },
@@ -109,6 +111,7 @@ const TOKENTABLERECORD TOKENTABLE[] = //instance of tokentable record with Sakur
    { MULTIPLY    ,"MULTIPLY"    ,false },
    { DIVIDE      ,"DIVIDE"      ,false },
    { MODULUS     ,"MODULUS"     ,false },
+   { PIPE        ,"PIPE"        ,false },
 };
 
 //-----------------------------------------------------------
@@ -419,10 +422,7 @@ void ParsePRINTStatement(TOKEN tokens[])
             GetNextToken(tokens);
             break;
          default:
-         	//NO LONGER COMPILER ERROR IF TOKEN IS NOT A STRING OR ENDL, NOW IT IS CONSIDERED AN EXPRESSION
-         	
-            /*ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,
-                                 "Expecting string or ENDL");*/
+        {
 			ParseExpression(tokens,datatype);
 
 // CODEGENERATION
@@ -436,7 +436,7 @@ void ParsePRINTStatement(TOKEN tokens[])
                   break;
             }
 // ENDCODEGENERATION
-
+		}
       }
    }
 
@@ -785,8 +785,9 @@ void ParseFactor(TOKEN tokens[],DATATYPE &datatype)
    void GetNextToken(TOKEN tokens[]);
 
    EnterModule("Factor");
+   TOKENTYPE operation;
 
-   if ( (tokens[0].type ==   ABS) || //indicate absolute value of integer
+   /*if ( (tokens[0].type ==  ABS) || //indicate absolute value of integer
         (tokens[0].type ==  PLUS) || //indicate positive integer
         (tokens[0].type == MINUS) //indicate negative integer
       )
@@ -798,7 +799,61 @@ void ParseFactor(TOKEN tokens[],DATATYPE &datatype)
       ParseSecondary(tokens,datatypeRHS);
 
       if ( datatypeRHS != INTEGERTYPE )
-         ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,"Expecting integer operand");
+         ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,"Expecting integer operand");*/
+         
+    /*if ( (tokens[0].type ==  PIPE) || //indicate absolute value of integer
+        (tokens[0].type ==  PLUS) || //indicate positive integer
+        (tokens[0].type == MINUS) //indicate negative integer
+      )
+   {
+   	
+   	//check if pipe is an absolute value is correct
+   	if(tokens[0].type == PIPE)
+   	{
+   		//checks if the value after the integer is another pipe
+	  if(tokens[2].type == PIPE)
+	  {
+	  	//DATATYPE datatypeRHS;
+	  	operation = ABS;
+	  }
+	  else
+	  	 ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,"Pipe can only be used as an ABS");
+	}
+	//token is a plus or minus
+   	else
+   	{
+      //DATATYPE datatypeRHS;
+      operation = tokens[0].type;
+	}
+	  DATATYPE datatypeRHS;
+      GetNextToken(tokens);
+      ParseSecondary(tokens,datatypeRHS);
+
+      if ( datatypeRHS != INTEGERTYPE )
+         ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,"Expecting integer operand");    */ 
+
+   /*****COME BACK TO THIS LATER****/
+   /*if (tokens[0].type == PIPE)
+   {
+   		//get next token
+		//parse ssecondary
+   		//check for pipe
+   }*/
+   
+   
+   if ( (tokens[0].type ==  ABS) || //indicate absolute value of integer
+        (tokens[0].type ==  PLUS) || //indicate positive integer
+        (tokens[0].type == MINUS) //indicate negative integer
+      )
+   {
+      DATATYPE datatypeRHS;
+      TOKENTYPE operation = tokens[0].type;
+
+      GetNextToken(tokens);
+      ParseSecondary(tokens,datatypeRHS);
+
+      if ( datatypeRHS != INTEGERTYPE )
+         ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,"Expecting integer operand");   
 
       switch ( operation )
       {
@@ -903,6 +958,7 @@ void ParsePrimary(TOKEN tokens[],DATATYPE &datatype)
             ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,"Expecting )");
          GetNextToken(tokens);
          break;
+         //case pipe???
       default:
          ProcessCompilerError(tokens[0].sourceLineNumber,tokens[0].sourceLineIndex,"Expecting integer, true, false, or (");
          break;
@@ -1147,6 +1203,46 @@ void GetNextToken(TOKEN tokens[])
             reader.GetNextCharacter();
             break;
 //===================================================================
+/*		 case '|':
+		 	lexeme[0] = nextCharacter;
+			i = 1;
+		 	nextCharacter = reader.GetLookAheadCharacter(1).character;
+		 	//absolute value | int |
+		 	if(isdigit(nextCharacter))
+			 {
+			 	i = 2;
+			 	//while(isdigit(nextCharacter))
+			 	while( (reader.GetLookAheadCharacter(i).character != '|') 
+                 && (reader.GetLookAheadCharacter(i).character != READER<CALLBACKSUSED>::EOLC)
+                 && (reader.GetLookAheadCharacter(i).character != READER<CALLBACKSUSED>::EOPC) )
+			 	{ //ignore integer value
+			 		//lexeme[i++] = nextCharacter;
+			 		//nextCharacter = reader.GetNextCharacter().character;
+					 i++;	
+				}
+				
+				if ( (reader.GetLookAheadCharacter(i).character == READER<CALLBACKSUSED>::EOLC)
+                  || (reader.GetLookAheadCharacter(i).character == READER<CALLBACKSUSED>::EOPC) )
+               		ProcessCompilerError(sourceLineNumber,sourceLineIndex,
+                                    "invalid use of pipe symbol");
+                lexeme[1] = reader.GetLookAheadCharacter(i).character; 
+                lexeme[2] = '\0';
+                type = ABS;
+			 }
+			 else
+			 {
+			  	lexeme[1] = '\0';
+			  	type = PIPE;
+			  	//nextCharacter = reader.GetNextCharacter().character;
+			 }
+			 reader.GetNextCharacter();
+			 //reader.GetNextCharacter();
+		 	break;*/
+		 case '|': 
+            type = PIPE;
+            lexeme[0] = nextCharacter; lexeme[1] = '\0';
+            reader.GetNextCharacter();
+            break;
          case READER<CALLBACKSUSED>::EOPC: 
             {
                static int count = 0;
