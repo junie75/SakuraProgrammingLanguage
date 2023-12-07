@@ -86,11 +86,9 @@ HelpfulHintsForYPL4Compiler.doc
 P4.log
 P4SS1.png
 P4SS2.png
-P5.kura
 P5.list
 P5.spl
 P5.stm
-P6.kura
 P6.list
 P6.log
 P6.spl
@@ -129,8 +127,8 @@ YPL3Compiler.pdf
 YPL4Compiler.doc
 YPL4Compiler.pdf
 p5.log
-stringTest.kura
 stringTest.list
 stringTest.log
 stringTest.stm
+stringTest.kura
 

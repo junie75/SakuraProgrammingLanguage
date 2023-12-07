@@ -1,0 +1,39 @@
+(-:--------------------------------------------------------:-)
+~~ Juni Ejere
+~~ Problem #5
+~~ P5.kura
+(-:--------------------------------------------------------:-)
+
+int x1
+const int c1 <- 1, bool c2 <- true
+int x2 <- 5, x3 <- 8
+
+main:
+
+	int sum, x1
+	bool b1, b2
+	const int c3 <- 3, bool c4 <- false
+	
+	output << `c1 = ` << c1 << ^n
+	output << `c2 = ` << c2 << ^n
+	output << `c3 = ` << c3 << ^n
+	output << `c4 = ` << c4 << ^n
+
+(-: Generates a static semantic (context-dependent) 
+      error when un-commmented. Try it and see!
+   c1 := 2.
+:-)
+
+	x1 <- 0
+	input `x1? ` >> x1
+	input >> x2
+	sum <- x1 + x2 + c1
+	output << `x1 + x2 + c1 = ` << sum << ^n
+
+~~ test new increment and decrement operators
+	output << `x1 = ` << x1 << `, ++x1 = ` << ++x1 << ^n
+	output << `x1 = ` << x1 << `, --x1 = ` << --x1 << ^n
+
+	input `b1? ` >> b1
+	b2 <- not(b1) or (c2 xor c4)
+	output << `b1 = ` << b1 << `, b2 = ` << b2 << ^n
