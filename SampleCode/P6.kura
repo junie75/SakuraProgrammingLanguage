@@ -1,0 +1,26 @@
+(-:---------------------------------------------------------:-)
+~~ Juni Ejere
+~~ Problem #6
+~~ P6.kura
+(-:---------------------------------------------------------:-)
+
+main:
+   int x, y
+   bool m, z <- false
+   bool j <- true 
+
+   do
+      input `x? ` >> x
+   while ( x != 0 )
+      input `y? ` >> y
+      if ( x < y ) 
+         output << `x  < y` << ^n
+      elseif ( x = y )
+         output << `x  = y` << ^n
+      elseif ( x > y ) 
+         output << `x  > y` << ^n
+      endif
+   endwhile
+
+   output << `"(m or j) and z = ` << (m or j) and z << ` "\n`
+
