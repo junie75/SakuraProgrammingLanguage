@@ -93,6 +93,43 @@ A complete overview of the language syntax can be found in the Sakura1LanguageRe
 
 ## Example Code
 
+Some sample .kura programs can be found in the SampleCode folder. Right now, we will run through P6.kura
+
+1. Comments
+
+   ```
+   (-:---------------------------------------------------------:-)
+   ~~ Juni Ejere
+   ~~ Problem #6
+   ~~ P6.kura
+   (-:---------------------------------------------------------:-)
+
+ Sakura supports both single line and block comments. Single line comments can be created using a double tilda "~~" symbol. 
+ <br>Block comments can be created with an east-pointing smiley face "(-:" and closed with a west-pointing smiley face ":-)".
+
+ 2. Main and Variables
+
+    ```
+    (-:---------------------------------------------------------:-)
+    ~~ Juni Ejere
+    ~~ Problem #6
+    ~~ P6.kura
+    (-:---------------------------------------------------------:-)
+
+    main:
+       int x, y
+       bool m, z <- false
+       const bool j <- true 
+
+A Sakura main program module is defined with the keyword "main" and a colon. A reminder that Sakura is case sensitive, and all reserved words are in lower case.
+<br>Global variables can be defined before the main program module. In this example we are declaring 5 variables local to the main program module. 
+<br> Sakura supports variable declaration with multiple variables. The statement "int x, y" declares two integer variables named "x" and "y".
+<br> Sakura variables can be initialized when being defined. Sakura also supports multiple L-value variables in a single assignment statement. The statement "bool m, z <- false" declares two 
+boolean variables named "m" and "z", and initializes both of them to false. The statement "const bool j <- true" declares a boolean constant   named "j" and initializes it to true. 
+Sakura constants must be initialized upon declaration and their value cannot be changed. 
+
+
+
 ## Acknowledgements
 
 The SakuraProgrammingLanguage project builds upon concepts learned from the "Survey of Programming Languages" CS3335 course at St. Mary's University, San Antonio, Texas. <br>
