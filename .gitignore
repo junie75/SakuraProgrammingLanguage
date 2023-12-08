@@ -130,26 +130,5 @@ stringTest.list
 stringTest.log
 stringTest.stm
 stringTest.kura
-Documentation/ASimpleSTMAssemblyLanguageProgram.doc
-Documentation/BNFForSampleYPL1.txt
-Documentation/CSSAbstractTemplate.doc
-Documentation/CSSAbstractTemplate.pdf
-Documentation/IntroductionToBNF.doc
-Documentation/SPL1LanguageReference.doc
-Documentation/SPLCompiler-generatedAssemblyLanguageProgramOutline.doc
-Documentation/SPLLanguageReference.doc
-Documentation/SPLParameterPassingAndLinkageToSubprogramModules.doc
-Documentation/STM.doc
-Documentation/STMProgramming.doc
-Documentation/SakuraAbstract.doc
-Documentation/YPL1Parser.doc
-Documentation/YPL1Parser.pdf
-Documentation/YPLCompiler5/YPL5 Compiler/Extra3.spl
-Documentation/YPLCompiler5/YPL5 Compiler/Extra4.spl
-Documentation/YPLCompiler5/YPL5 Compiler/HelpfulHintsForYPL5Compiler.doc
-Documentation/YPLCompiler5/YPL5 Compiler/P8.spl
-Documentation/YPLCompiler5/YPL5 Compiler/P9.spl
-Documentation/YPLCompiler5/YPL5 Compiler/SPL5Compiler.cpp
-Documentation/YPLCompiler5/YPL5 Compiler/YPL5Compiler.doc
-YPLReader.pdf
-
+Doc/
+Sakura2Compiler.cpp
