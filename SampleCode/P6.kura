@@ -7,7 +7,7 @@
 main:
    int x, y
    bool m, z <- false
-   bool j <- true 
+   const bool j <- true 
 
    do
       input `x? ` >> x
