@@ -1,0 +1,23 @@
+||-------------------------------------------------------------------
+|| BNF for a sample YPL1
+||-------------------------------------------------------------------
+<YPL> ::= <MAINDefinition> EOPC
+
+<MAINDefinition> ::= MAIN
+                     _{_
+                        { <OUTPUTStatement> ; }*
+                     _}_
+
+<OUTPUTStatement> ::= OUTPUT ( <string> )
+
+<string>          ::= "{ <ASCIICharacter> }*"
+
+<ASCIICharacter>  ::=                                      || all printable characters
+
+<id>              :: (( <letter> || _ )) { (( <letter> | <digit> | _ ))  }*
+
+<letter>          ::= A | B | C | ... | Z 
+
+<digit>           ::= 0 | 1 | 2 | ... | 9
+
+<comment>         ::= ???

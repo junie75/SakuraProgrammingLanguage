@@ -1,0 +1,74 @@
+;-------------------------------------------------------------
+; Dr. Art Hanna
+; Problem Extra #2 (test <CHOOSEStatement>)
+; Extra2.spl
+;-------------------------------------------------------------
+
+PROGRAM
+
+;-------------------------------------------------------------
+; Without ELSE
+;-------------------------------------------------------------
+   PRINT "ONE (default)",ENDL.
+   CHOOSE
+      WHEN (false): 
+      WHEN (true): 
+         PRINT "2".
+         PRINT ENDL.
+      WHEN (true): PRINT "3",ENDL.
+   END
+
+   PRINT ENDL,"ONE (explicit)",ENDL.
+   CHOOSE ONE
+      WHEN (true): PRINT "1\n".
+      WHEN (true): 
+         PRINT "2".
+         PRINT ENDL.
+      WHEN (true): PRINT "3",ENDL.
+   END
+
+   PRINT ENDL,"ALL",ENDL.
+   CHOOSE ALL
+      WHEN (true): PRINT "1\n". 
+      WHEN (false): 
+         PRINT "2".
+         PRINT ENDL.
+      WHEN (true): PRINT "3",ENDL.
+   END
+
+;-------------------------------------------------------------
+; With ELSE
+;-------------------------------------------------------------
+   PRINT "ONE (default)",ENDL.
+   CHOOSE
+      WHEN (false): 
+      WHEN (false): 
+         PRINT "2".
+         PRINT ENDL.
+      WHEN (false): PRINT "3",ENDL.
+      ELSE
+         PRINT "ELSE ONE (default)",ENDL.
+   END
+
+   PRINT "ONE (explicit)",ENDL.
+   CHOOSE
+      WHEN (false): 
+      WHEN (true): 
+         PRINT "2".
+         PRINT ENDL.
+      WHEN (false): PRINT "3",ENDL.
+      ELSE
+         PRINT "ELSE ONE (explicit)",ENDL.
+   END
+
+   PRINT "ALL",ENDL.
+   CHOOSE
+      WHEN (false): 
+      WHEN (false): 
+         PRINT "2".
+         PRINT ENDL.
+      WHEN (false): PRINT "3",ENDL.
+      ELSE
+         PRINT "ELSE ALL",ENDL.
+   END
+END
