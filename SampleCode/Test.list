@@ -1,0 +1,11 @@
+"Test.kura" Page    1
+Thu Dec 07 18:39:35 2023
+
+Line Source Line
+---- -------------------------------------------------------------------------------
+   1 ~~
+   2 ~~ Hello, World! program in Sakura
+   3 ~~
+   4    main:
+   5        output << `Hello, World!`<< ^n
+******* Sakura Compiler ending

@@ -260,8 +260,8 @@ int main() //finds file to compile and execute
    {
       cout << "Sakura exception: " << sakuraException.GetDescription() << endl;
    }
-   lister.ListInformationLine("******* Sakura1 Compiler ending");
-   cout << "Sakura1 Compiler ending\n";
+   lister.ListInformationLine("******* Sakura Compiler ending");
+   cout << "Sakura Compiler ending\n";
 
    system("PAUSE");
    return( 0 );
