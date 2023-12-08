@@ -1,10 +1,9 @@
-# SakuraProgrammingLanguage
+# SakuraProgrammingLanguage ![Cherry Blossoms](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Images/cherry-blossom-clip-art-12-transparent.png)
 
-## Introduction 
 Sakura is a simple programming language created for my CS3335 class "Survey of Programming Languages." 
 Sakura is a minimal subset of SPL (Simple Programming Language), created by Dr. Arthur Hanna of St. Mary's University, which is an amalgamation of high-level programming constructs he has run into during his computing career. 
-Sakura is a free-format language that is inspired by programming languages such as: C++, Python, and JavaScript. 
-The main goals for my language were: <br>
+Sakura is a free-format, case-sensitive language that is inspired by programming languages such as: C++, Python, and JavaScript. 
+<br><br>The main goals for my language were: <br>
  👁️ Readability <br>
  💡 Efficiency <br>
  🩷 Pleasing aesthetics <br>
@@ -12,7 +11,6 @@ The main goals for my language were: <br>
  ## Table of Contents
 
 - [Project Title](#SakuraProgrammingLanguage)
-  - [Introduction](#introduction)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Getting Started](#getting-started)
@@ -69,23 +67,33 @@ Follow these steps to get started with Sakura:
 
 ### Usage
 
-1. Create your source file and save it with the ".kura" extension. **Note: Make sure the save as type is "All Files" and that it is saved in the same folder as SakuraCompiler.cpp and STM.c**
-   img tutorial 1, tutorial 2
-2. Run the SakuraCompiler executable and enter the sourcefile name when prompted. **Note: The sourcefile name can be entered without the .kura extension, the compiler will find the extension automatically**
-   img tutorial 3
+1. Create your source file and save it with the ".kura" extension. <br>**Note: Make sure the save as type is "All Files" and that it is saved in the same folder as SakuraCompiler.cpp and STM.c**
+   ![img tutorial 1](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Tutorial/Tutorial1.png) <br> ![img tutorial 2](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Tutorial/Tutorial2.png)
+
+
+2. Run the SakuraCompiler executable and enter the sourcefile name when prompted. <br>**Note: The sourcefile name can be entered without the .kura extension, the compiler will find the extension automatically**
+   ![img tutorial 3](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Tutorial/Tutorial3.png)
+
+
 3. You will notice the creation of a list file and an stm file with the same name as your source file. The list file can be used to debug errors in the source code, and the stm file will translate the .kura file into machine code.
-   img tutorial 4
-4. Next run the STM executable and enter the sourcefile name when prompted. **Note: the sourcefile name should be entered without an extension. The STM program will find the .stm file automatically**
-   img tutorial 5
-   And that is how you compile and run a Sakura source file! 😊
-   **Note: You will notice the creation of a log file with the same name as your source file. This file contains both the assembler listing file and the trace of the run-time execution of the resulting machine code.**
+   ![img tutorial 4](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Tutorial/Tutorial4.png)
+
+
+4. Next run the STM executable and enter the sourcefile name when prompted. <br>**Note: the sourcefile name should be entered without an extension. The STM program will find the .stm file automatically**
+   ![img tutorial 5](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Tutorial/Tutorial5.png)
+   <br>**Note: You will notice the creation of a log file with the same name as your source file. This file contains both the assembler listing file and the trace of the run-time execution of the resulting machine code.**
+
+
+5. Now you are ready to start programming in Sakura! 😊 
+   
 
 ## Language Syntax
 
-A complete overview of the language syntax can be found in the Sakura1LanguageReference.doc [Download Word Document](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Sakura1LanguageReference.doc)
+A complete overview of the language syntax can be found in the Sakura1LanguageReference.doc [Download Word Document](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Documentation/SakuraLanguageReference.doc)
 
 ## Example Code
 
 ## Acknowledgements
--The SakuraProgrammingLanguage project builds upon concepts learned from the "Survey of Programming Languages" CS3335 course at St. Mary's University, San Antonio, Texas.
--The lexer and parser implementations are inspired by "Simple Programming Language (SPL)," created by Dr. Arthur Hanna.
+
+The SakuraProgrammingLanguage project builds upon concepts learned from the "Survey of Programming Languages" CS3335 course at St. Mary's University, San Antonio, Texas. <br>
+The lexer and parser implementations are inspired by "Simple Programming Language (SPL)," created by Dr. Arthur Hanna. A copy of the SPL Language Reference can be found in the documentation folder. 
