@@ -89,7 +89,7 @@ Follow these steps to get started with Sakura:
 
 ## Language Syntax
 
-A complete overview of the language syntax can be found in the Sakura1LanguageReference.doc [Download Word Document](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Documentation/SakuraLanguageReference.doc)
+A complete overview of the language syntax can be found in the Sakura1LanguageReference.doc [here](https://github.com/junie75/SakuraProgrammingLanguage/blob/master/Documentation/SakuraLanguageReference.doc).
 
 ## Example Code
 
